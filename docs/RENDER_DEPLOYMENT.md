@@ -21,8 +21,11 @@ Deploy the Express API to [Render](https://render.com) and connect it to the Ver
 |---|---|---|---|
 | `NODE_ENV` | Yes | `production` | Enables production CORS |
 | `DATABASE_URL` | Yes | `file:./prisma/prod.db` | SQLite path (see notes below) |
-| `LLM_PROVIDER` | Yes | `openai` | Use `openai` on Render (Ollama unavailable) |
-| `OPENAI_API_KEY` | Yes | `sk-...` | Required when `LLM_PROVIDER=openai` |
+| `LLM_PROVIDER` | Yes | `groq` | Use `groq` on Render (free hosted API; Ollama unavailable) |
+| `GROQ_API_KEY` | Yes | `gsk_...` | Required when `LLM_PROVIDER=groq` — get at [console.groq.com](https://console.groq.com) |
+| `GROQ_MODEL` | No | `llama-3.3-70b-versatile` | Groq model name |
+| `GROQ_TIMEOUT_MS` | No | `30000` | Request timeout in ms |
+| `OPENAI_API_KEY` | If `openai` | `sk-...` | Required only when `LLM_PROVIDER=openai` |
 | `OPENAI_MODEL` | No | `gpt-4o-mini` | Defaults to `gpt-4o-mini` |
 | `OPENAI_TIMEOUT_MS` | No | `30000` | Request timeout in ms |
 | `FRONTEND_URL` | Yes | `https://your-app.vercel.app` | Vercel frontend URL for CORS |
@@ -62,10 +65,10 @@ In **Environment** → **Add Environment Variable**:
 ```env
 NODE_ENV=production
 DATABASE_URL=file:./prisma/prod.db
-LLM_PROVIDER=openai
-OPENAI_API_KEY=<your-openai-api-key>
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_TIMEOUT_MS=30000
+LLM_PROVIDER=groq
+GROQ_API_KEY=<your-groq-api-key>
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_TIMEOUT_MS=30000
 FRONTEND_URL=https://<your-vercel-app>.vercel.app
 ```
 
@@ -175,8 +178,8 @@ npm run build
 # Run (set env vars first)
 NODE_ENV=production \
 DATABASE_URL="file:./prisma/prod.db" \
-LLM_PROVIDER=openai \
-OPENAI_API_KEY=sk-... \
+LLM_PROVIDER=groq \
+GROQ_API_KEY=gsk_... \
 FRONTEND_URL=http://localhost:5173 \
 node dist/server.js
 ```
@@ -190,5 +193,5 @@ node dist/server.js
 | Build fails on Prisma | Ensure `DATABASE_URL` is set before build |
 | CORS errors from Vercel | Set `FRONTEND_URL` to exact Vercel URL (no trailing slash) |
 | `Invalid environment configuration` | Check all required env vars are set |
-| LLM always returns fallback | Verify `OPENAI_API_KEY` and `LLM_PROVIDER=openai` |
+| LLM always returns fallback | Verify `GROQ_API_KEY` and `LLM_PROVIDER=groq` |
 | Data lost after redeploy | Expected with SQLite on Render; use PostgreSQL |

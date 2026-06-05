@@ -13,12 +13,12 @@ services:
       - key: DATABASE_URL
         value: file:./prisma/prod.db
       - key: LLM_PROVIDER
-        value: openai
-      - key: OPENAI_MODEL
-        value: gpt-4o-mini
-      - key: OPENAI_TIMEOUT_MS
+        value: groq
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: GROQ_TIMEOUT_MS
         value: 30000
-      - key: OPENAI_API_KEY
+      - key: GROQ_API_KEY
         sync: false
       - key: FRONTEND_URL
         sync: false

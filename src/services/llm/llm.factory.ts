@@ -1,5 +1,6 @@
 import { env } from "../../utils/env";
 import { LLMProvider } from "./llm.interface";
+import { GroqProvider } from "./groq.provider";
 import { OllamaProvider } from "./ollama.provider";
 import { OpenAIProvider } from "./openai.provider";
 
@@ -9,6 +10,8 @@ export function createLlmProvider(): LLMProvider {
       return new OllamaProvider();
     case "openai":
       return new OpenAIProvider();
+    case "groq":
+      return new GroqProvider();
     default: {
       const exhaustiveCheck: never = env.LLM_PROVIDER;
       throw new Error(`Unsupported LLM provider: ${exhaustiveCheck}`);

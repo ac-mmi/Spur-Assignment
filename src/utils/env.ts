@@ -8,13 +8,16 @@ const envSchema = z
       .enum(["development", "production", "test"])
       .default("development"),
     FRONTEND_URL: z.string().url().optional(),
-    LLM_PROVIDER: z.enum(["ollama", "openai"]).default("ollama"),
+    LLM_PROVIDER: z.enum(["ollama", "openai", "groq"]).default("ollama"),
     OLLAMA_MODEL: z.string().min(1).default("qwen3:8b"),
     OLLAMA_BASE_URL: z.string().url().optional(),
     OLLAMA_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
     OPENAI_API_KEY: z.string().optional(),
     OPENAI_MODEL: z.string().min(1).default("gpt-4o-mini"),
     OPENAI_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
+    GROQ_API_KEY: z.string().optional(),
+    GROQ_MODEL: z.string().min(1).default("llama-3.3-70b-versatile"),
+    GROQ_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
   })
   .superRefine((data, ctx) => {
     if (data.LLM_PROVIDER === "openai" && !data.OPENAI_API_KEY) {
@@ -22,6 +25,14 @@ const envSchema = z
         code: "custom",
         message: "OPENAI_API_KEY is required when LLM_PROVIDER=openai",
         path: ["OPENAI_API_KEY"],
+      });
+    }
+
+    if (data.LLM_PROVIDER === "groq" && !data.GROQ_API_KEY) {
+      ctx.addIssue({
+        code: "custom",
+        message: "GROQ_API_KEY is required when LLM_PROVIDER=groq",
+        path: ["GROQ_API_KEY"],
       });
     }
 

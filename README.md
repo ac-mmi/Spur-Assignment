@@ -2,7 +2,7 @@
 
 AI-powered customer support chat platform built as a take-home assignment for the **Founding Full-Stack Engineer** role at **Spur**.
 
-The application demonstrates a production-oriented full-stack implementation: a SvelteKit frontend, an Express + TypeScript API, persistent conversations via Prisma/SQLite, and a pluggable LLM layer supporting local (Ollama) and cloud (OpenAI) providers.
+The application demonstrates a production-oriented full-stack implementation: a SvelteKit frontend, an Express + TypeScript API, persistent conversations via Prisma/SQLite, and a pluggable LLM layer supporting local (Ollama) and cloud (Groq, OpenAI) providers.
 
 ![SpurMart Support Chat](./app.png)
 
@@ -52,6 +52,7 @@ The assignment prioritizes clean architecture, type safety, persistence, and rea
 
 - Provider abstraction (`LLMProvider` interface)
 - Ollama support for local development
+- Groq support for free hosted inference (recommended for deployment)
 - OpenAI support via environment configuration
 - Last 10 messages included as conversation context
 - SpurMart FAQ knowledge base in system prompt
@@ -84,7 +85,7 @@ Chat Service
   ↓
 LLM Factory → LLMProvider
   ↓
-Ollama / OpenAI
+Ollama / Groq / OpenAI
 ```
 
 ### Component responsibilities
@@ -114,6 +115,7 @@ src/
 │       ├── llm.interface.ts
 │       ├── ollama.provider.ts
 │       ├── openai.provider.ts
+│       ├── groq.provider.ts
 │       └── llm.factory.ts
 ├── repositories/          # Data access layer
 ├── middleware/            # Logging, validation, errors
@@ -291,7 +293,15 @@ Providers are selected at runtime via `LLM_PROVIDER`:
 | Value | Provider |
 |---|---|
 | `ollama` | Local Ollama (`POST /api/chat`) |
+| `groq` | Groq OpenAI-compatible API |
 | `openai` | OpenAI Node SDK |
+
+### Groq (recommended for production)
+
+- Free tier available at [console.groq.com](https://console.groq.com)
+- Works on Render without local GPU infrastructure
+- Uses OpenAI-compatible SDK pointed at `https://api.groq.com/openai/v1`
+- Default model: `llama-3.3-70b-versatile`
 
 ### Ollama (local development)
 
@@ -341,8 +351,12 @@ Copy `.env.example` to `.env` in the project root:
 PORT=3000
 DATABASE_URL="file:./dev.db"
 
-# ollama | openai
-LLM_PROVIDER=ollama
+# ollama | openai | groq
+LLM_PROVIDER=groq
+
+GROQ_API_KEY=gsk_your_groq_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_TIMEOUT_MS=30000
 
 OLLAMA_MODEL=qwen3:8b
 OLLAMA_BASE_URL=http://localhost:11434
@@ -357,7 +371,10 @@ OPENAI_TIMEOUT_MS=30000
 |---|---|---|
 | `PORT` | No | API server port (default: `3000`) |
 | `DATABASE_URL` | Yes | SQLite connection string |
-| `LLM_PROVIDER` | No | `ollama` or `openai` (default: `ollama`) |
+| `LLM_PROVIDER` | No | `ollama`, `groq`, or `openai` (default: `ollama`) |
+| `GROQ_API_KEY` | When `LLM_PROVIDER=groq` | Groq API key |
+| `GROQ_MODEL` | No | Groq model (default: `llama-3.3-70b-versatile`) |
+| `GROQ_TIMEOUT_MS` | No | Groq request timeout |
 | `OLLAMA_MODEL` | No | Ollama model name |
 | `OLLAMA_BASE_URL` | No | Ollama API base URL |
 | `OLLAMA_TIMEOUT_MS` | No | Ollama request timeout |
@@ -488,7 +505,7 @@ Validation is enforced with **Zod** at the route layer. LLM failures never crash
 ### Why abstract LLM providers?
 
 - Application code depends on `LLMProvider`, not vendor SDKs
-- Ollama enables free local development; OpenAI enables production quality
+- Ollama enables free local development; Groq/OpenAI enable hosted production inference
 - New providers (Anthropic, Azure OpenAI) can be added without touching chat logic
 - Timeouts, prompt construction, and fallbacks are centralized
 
@@ -584,8 +601,8 @@ Required environment variables:
 ```env
 NODE_ENV=production
 DATABASE_URL=file:./prisma/prod.db
-LLM_PROVIDER=openai
-OPENAI_API_KEY=<your-key>
+LLM_PROVIDER=groq
+GROQ_API_KEY=<your-groq-key>
 FRONTEND_URL=https://<your-app>.vercel.app
 ```
 
@@ -626,7 +643,8 @@ Open the Vercel URL in a browser and send a chat message.
 |---|---|---|
 | `PUBLIC_API_URL` | Vercel | Render backend base URL |
 | `OPENAI_API_KEY` | Render | LLM provider API key |
-| `LLM_PROVIDER` | Render | `openai` for production |
+| `LLM_PROVIDER` | Render | `groq` for production (free hosted API) |
+| `GROQ_API_KEY` | Render | Groq API key |
 | `DATABASE_URL` | Render | SQLite or PostgreSQL connection |
 
 ---
