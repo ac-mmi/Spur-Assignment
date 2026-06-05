@@ -4,12 +4,12 @@ function ChatInput($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let { disabled = false } = $$props;
     let value = "";
-    $$renderer2.push(`<form class="input-form svelte-5wsbgm"><div class="input-wrapper svelte-5wsbgm"><textarea class="textarea svelte-5wsbgm" placeholder="Message support..." rows="1" maxlength="2000"${attr("disabled", disabled, true)} aria-label="Message input">`);
+    $$renderer2.push(`<form class="input-form svelte-5wsbgm"><div class="input-wrapper svelte-5wsbgm"><textarea class="textarea svelte-5wsbgm" placeholder="Type your prompt here" rows="1" maxlength="2000"${attr("disabled", disabled, true)} aria-label="Message input">`);
     const $$body = escape_html(value);
     if ($$body) {
       $$renderer2.push(`${$$body}`);
     }
-    $$renderer2.push(`</textarea> <button type="submit" class="send-button svelte-5wsbgm"${attr("disabled", disabled || !value.trim(), true)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" aria-hidden="true"><path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.651 60.651 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.651 60.651 0 0 0 3.478 2.404Z"></path></svg> <span class="sr-only svelte-5wsbgm">Send message</span></button></div> <p class="hint svelte-5wsbgm">Press Enter to send, Shift+Enter for a new line</p></form>`);
+    $$renderer2.push(`</textarea> <button type="submit" class="send-button svelte-5wsbgm"${attr("disabled", disabled || !value.trim(), true)} aria-label="Send message"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></button></div></form>`);
   });
 }
 function MessageBubble($$renderer, $$props) {
@@ -58,7 +58,7 @@ function ChatWindow($$renderer, $$props) {
     {
       $$renderer2.push("<!--[-1-->");
     }
-    $$renderer2.push(`<!--]--> <footer class="footer svelte-1jlre7m">`);
+    $$renderer2.push(`<!--]--> <footer class="floating-footer svelte-1jlre7m">`);
     ChatInput($$renderer2, { disabled: isLoading });
     $$renderer2.push(`<!----></footer></div>`);
   });

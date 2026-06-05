@@ -3,8 +3,7 @@ import type {
   ConversationSummary,
   SendMessageResponse,
 } from "$lib/types/chat";
-
-const API_BASE = import.meta.env.VITE_API_URL ?? "/api";
+import { getApiBase } from "./config";
 
 async function parseError(response: Response): Promise<string> {
   try {
@@ -18,7 +17,9 @@ async function parseError(response: Response): Promise<string> {
 export async function fetchHistory(
   sessionId: string,
 ): Promise<ChatHistoryResponse> {
-  const response = await fetch(`${API_BASE}/chat/history/${sessionId}`);
+  const response = await fetch(
+    `${getApiBase()}/chat/history/${sessionId}`,
+  );
 
   if (response.status === 404) {
     return { sessionId, messages: [] };
@@ -32,7 +33,7 @@ export async function fetchHistory(
 }
 
 export async function fetchConversations(): Promise<ConversationSummary[]> {
-  const response = await fetch(`${API_BASE}/chat/conversations`);
+  const response = await fetch(`${getApiBase()}/chat/conversations`);
 
   if (!response.ok) {
     throw new Error(await parseError(response));
@@ -45,7 +46,7 @@ export async function sendMessage(
   message: string,
   sessionId?: string,
 ): Promise<SendMessageResponse> {
-  const response = await fetch(`${API_BASE}/chat/message`, {
+  const response = await fetch(`${getApiBase()}/chat/message`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, sessionId }),

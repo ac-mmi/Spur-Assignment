@@ -567,42 +567,72 @@ Decisions made due to assignment time constraints:
 
 ## Deployment
 
-### Backend
+Production target: **Frontend on Vercel** + **Backend on Render**.
 
-1. Set environment variables on the host (or secrets manager)
-2. Set `DATABASE_URL` to a persistent SQLite path or migrate to PostgreSQL
-3. Set `LLM_PROVIDER=openai` and provide `OPENAI_API_KEY` for production
-4. Build and run:
+### Backend (Render)
 
-```bash
-npm install
-npm run build
-npx prisma migrate deploy
-npm start
-```
+1. Create a new **Web Service** on [Render](https://render.com)
+2. Connect the GitHub repo; set **Root Directory** to `.` (repo root)
+3. Configure:
 
-### Frontend
-
-1. Set `VITE_API_URL` to the deployed backend URL (e.g. `https://api.example.com`)
-2. Build and deploy static output:
-
-```bash
-cd frontend
-npm install
-npm run build
-```
-
-Deploy the `frontend/build` output to Vercel, Netlify, or any static host. Configure the SvelteKit adapter as needed (`@sveltejs/adapter-node` for SSR, `adapter-static` for SPA).
-
-### Recommended production stack
-
-| Component | Suggestion |
+| Setting | Value |
 |---|---|
-| API | Railway, Fly.io, Render, or AWS ECS |
-| Database | PostgreSQL (Neon, Supabase, RDS) |
-| LLM | OpenAI (`gpt-4o-mini` or `gpt-4o`) |
-| Frontend | Vercel or Netlify |
-| Secrets | Platform env vars or AWS Secrets Manager |
+| Build Command | `npm install && npm run build && npx prisma generate && npx prisma migrate deploy` |
+| Start Command | `npm start` |
+
+4. Set environment variables:
+
+```env
+NODE_ENV=production
+PORT=10000
+DATABASE_URL=file:./prisma/prod.db
+LLM_PROVIDER=openai
+OPENAI_API_KEY=<your-key>
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_TIMEOUT_MS=30000
+```
+
+5. Deploy and verify: `https://<your-service>.onrender.com/health`
+
+> **Note:** Render's free tier uses ephemeral disk. SQLite data may not persist across redeploys. For production durability, migrate to PostgreSQL.
+
+### Frontend (Vercel)
+
+The frontend uses `@sveltejs/adapter-vercel` and reads the backend URL from `PUBLIC_API_URL`.
+
+1. Import the repo on [Vercel](https://vercel.com)
+2. Set **Root Directory** to `frontend`
+3. Framework Preset: **SvelteKit** (auto-detected)
+4. Set environment variable:
+
+```env
+PUBLIC_API_URL=https://<your-service>.onrender.com
+```
+
+5. Deploy
+
+### Verify production
+
+```bash
+# Backend health
+curl https://<your-service>.onrender.com/health
+
+# Send a test message
+curl -X POST https://<your-service>.onrender.com/chat/message \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Do you ship internationally?"}'
+```
+
+Open the Vercel URL in a browser and send a chat message.
+
+### Environment summary
+
+| Variable | Where | Purpose |
+|---|---|---|
+| `PUBLIC_API_URL` | Vercel | Render backend base URL |
+| `OPENAI_API_KEY` | Render | LLM provider API key |
+| `LLM_PROVIDER` | Render | `openai` for production |
+| `DATABASE_URL` | Render | SQLite or PostgreSQL connection |
 
 ---
 

@@ -108,7 +108,7 @@
     "src": "src/routes/+layout.svelte",
     "isEntry": true,
     "css": [
-      "_app/immutable/assets/_layout.BQZ7M_W8.css"
+      "_app/immutable/assets/_layout.B8Z7O8za.css"
     ]
   },
   "src/routes/+page.svelte": {
@@ -120,7 +120,7 @@
       "_index.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.DqUuRiRg.css"
+      "_app/immutable/assets/_page.BFh35RY3.css"
     ]
   }
 }
