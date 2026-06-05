@@ -561,27 +561,6 @@ Decisions made due to assignment time constraints:
 
 ---
 
-## Screenshots
-
-### Main chat interface
-
-<!-- Replace with actual screenshot -->
-![Chat interface](./docs/screenshots/chat-interface.png)
-
-### Conversation sidebar
-
-<!-- Replace with actual screenshot -->
-![Sidebar](./docs/screenshots/sidebar.png)
-
-### Empty state
-
-<!-- Replace with actual screenshot -->
-![Empty state](./docs/screenshots/empty-state.png)
-
-> Add screenshots to `docs/screenshots/` and update paths above.
-
----
-
 ## Deployment
 
 Production target: **Frontend on Vercel** + **Backend on Render**.
