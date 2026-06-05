@@ -571,30 +571,25 @@ Production target: **Frontend on Vercel** + **Backend on Render**.
 
 ### Backend (Render)
 
-1. Create a new **Web Service** on [Render](https://render.com)
-2. Connect the GitHub repo; set **Root Directory** to `.` (repo root)
-3. Configure:
+See **[docs/RENDER_DEPLOYMENT.md](./docs/RENDER_DEPLOYMENT.md)** for the full guide.
 
 | Setting | Value |
 |---|---|
-| Build Command | `npm install && npm run build && npx prisma generate && npx prisma migrate deploy` |
+| Build Command | `npm install && npm run build && npx prisma migrate deploy` |
 | Start Command | `npm start` |
+| Health Check | `/health` |
 
-4. Set environment variables:
+Required environment variables:
 
 ```env
 NODE_ENV=production
-PORT=10000
 DATABASE_URL=file:./prisma/prod.db
 LLM_PROVIDER=openai
 OPENAI_API_KEY=<your-key>
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_TIMEOUT_MS=30000
+FRONTEND_URL=https://<your-app>.vercel.app
 ```
 
-5. Deploy and verify: `https://<your-service>.onrender.com/health`
-
-> **Note:** Render's free tier uses ephemeral disk. SQLite data may not persist across redeploys. For production durability, migrate to PostgreSQL.
+> **Note:** Render's free tier uses ephemeral disk. SQLite data may not persist across redeploys. For production durability, migrate to PostgreSQL (steps in `docs/RENDER_DEPLOYMENT.md`).
 
 ### Frontend (Vercel)
 

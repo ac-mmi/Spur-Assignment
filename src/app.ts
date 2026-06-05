@@ -1,5 +1,5 @@
-import cors from "cors";
 import express, { Application, Request, Response } from "express";
+import { corsMiddleware } from "./utils/cors";
 import { ChatController } from "./controllers/chat.controller";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { requestLoggingMiddleware } from "./middleware/logging.middleware";
@@ -12,7 +12,7 @@ import { createLlmProvider } from "./services/llm/llm.factory";
 export function createApp(): Application {
   const app = express();
 
-  app.use(cors());
+  app.use(corsMiddleware);
   app.use(express.json({ limit: "16kb" }));
   app.use(requestLoggingMiddleware);
 

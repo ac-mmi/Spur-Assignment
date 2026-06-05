@@ -20,7 +20,7 @@ export class OllamaProvider implements LLMProvider {
   private readonly timeoutMs: number;
 
   constructor() {
-    this.baseUrl = env.OLLAMA_BASE_URL.replace(/\/$/, "");
+    this.baseUrl = env.OLLAMA_BASE_URL!.replace(/\/$/, "");
     this.model = env.OLLAMA_MODEL;
     this.timeoutMs = env.OLLAMA_TIMEOUT_MS;
   }
